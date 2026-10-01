@@ -1,0 +1,34 @@
+.pyc File (Disk)
+      │
+      │ marshal.load()
+      ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                        PyCodeObject (RAM)                              │
+├────────────────────────────────────────────────────────────────────────┤
+│ PyObject_HEAD        ─►  Type: CodeType, Ref Count                     │
+│ co_filename          ─►  "app.py"                                      │
+│ co_name              ─►  "calculate_sum"                               │
+│ co_argcount          ─►  2                                             │
+│ co_nlocals           ─►  3                                             │
+│ co_code              ─►  b'|\x00|\x01\x17\x00}\x02|\x02S\x00'           │
+│ co_consts            ─►  (None, 100)                                   │
+│ co_names             ─►  ('print', 'int')                              │
+│ co_varnames          ─►  ('a', 'b', 'result')                          │
+│ co_linetable         ─►  <line-mapping bytes>                          │
+└────────────────────────────────────────────────────────────────────────┘
+      │
+      │ Module execution (Frame creation)
+      ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                        sys.modules Dictionary                          │
+├──────────────────────────────────────┬─────────────────────────────────┤
+│ Module Key                           │ Module Value (PyModuleObject)   │
+├──────────────────────────────────────┼─────────────────────────────────┤
+│ "app"                                ─► PyModuleObject                  │
+│                                           └── __dict__                 │
+│                                                ├── "calculate_sum": ─┐ │
+└──────────────────────────────────────────────────────────────────────┼─┘
+                                                                       │
+                                                                       ▼
+                                                             PyFunctionObject
+                                                               └── __code__ ───► [Points to PyCodeObject]
