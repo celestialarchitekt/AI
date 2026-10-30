@@ -25,12 +25,12 @@ class State(TypedDict):
 # ---- define the nodes
 def node_a(state:State):
     print("node a executed")
-    return {"foo": "from_node_a", "bar":["item_a"]}
+    return  {"bar":["item_a"]}
 
 
 def node_b(state:State):
     print("node b executed")
-    return {"foo": "from_node_b", "bar": ["item_b"]}
+    return {"bar": ["item_b"]}
 
 
 # ----- build the graph
@@ -76,7 +76,8 @@ for state in graph.get_state_history(config):
 # updateState
 print(" ------ Running graph.update_state() -----")
 print("State Before Update: ", graph.get_state(config).values)
-graph.update_state(config, {"foo": "overwritten_foo"})
+graph.update_state(config, {"foo": "overwritten_foo"}) # creates a new checkpoint after the lastOne, still a linear history
+
 print("State After Update: ", graph.get_state(config).values)
 print("\n" + "-"*100 + "\n")
 
@@ -95,3 +96,16 @@ print(past_cp_id)
 replay = graph.invoke(None, past_config)
 print("---- Replay Result ----")
 print(replay)
+
+
+# updateState by going to a checkpoint before the lastOne, non linear graph, a fork is created
+print("\n" + "-"*100 +"\n")
+print("Updating Checkpoint ...")
+past_checkpoint_config = history[2].config # take a checkpoint in history
+new_config = graph.update_state(past_checkpoint_config, {"foo":"branching from past"}) # update and create a new checkpoint from there
+
+result_branched = graph.invoke(None, new_config) 
+print("result_branched: ", result_branched)
+
+
+# ----- END OF CODE -----
